@@ -1,0 +1,2223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mountainunicycle - Aventuras Extremas en Monociclo</title>
+    <style>
+        /* Estilos Base y Variables */
+        :root {
+            --primary-color: #e62222; /* Rojo Intenso */
+            --secondary-color: #111111; /* Negro Profundo */
+            --accent-color: #ff4444; /* Rojo Claro para acentos */
+            --text-color: #f0f0f0; /* Gris Claro para texto */
+            --background-light: #2a2a2a; /* Gris Oscuro Claro */
+            --background-dark: #181818; /* Gris Muy Oscuro */
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --transition-speed: 0.4s;
+            --cubic-bezier: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente más moderna */
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--background-dark);
+            color: var(--text-color);
+            overflow-x: hidden; /* Previene scroll horizontal */
+            line-height: 1.6;
+        }
+
+        /* --- Animación Monociclo --- */
+        .unicycle-animation {
+            position: fixed;
+            top: 70px; /* Debajo de la barra de navegación */
+            left: -100px; /* Empieza fuera de la pantalla */
+            width: 80px;
+            height: auto;
+            z-index: 999; /* Encima de casi todo, pero debajo del nav */
+            transition: transform 0.5s ease-out;
+            pointer-events: none; /* No interfiere con clics */
+        }
+
+        /* La animación se activa al pasar el ratón por la navegación */
+        nav:hover ~ .unicycle-animation {
+            animation: rideAcross 10s linear infinite;
+        }
+
+        @keyframes rideAcross {
+            0% {
+                transform: translateX(0);
+                opacity: 0;
+            }
+            10% {
+                transform: translateX(calc(10vw + 100px)); /* Entra en pantalla */
+                opacity: 1;
+            }
+            90% {
+                transform: translateX(calc(90vw + 100px)); /* Cruza la pantalla */
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(calc(100vw + 200px)); /* Sale de pantalla */
+                opacity: 0;
+            }
+        }
+
+        /* --- Header --- */
+        header {
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .parallax-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80') center center no-repeat;
+            background-size: cover;
+            background-attachment: fixed; /* Efecto Parallax */
+            filter: brightness(0.6);
+            transform: scale(1.1); /* Ligero zoom inicial */
+        }
+
+        .header-content {
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1s ease-out forwards 0.5s;
+            padding: 20px;
+        }
+
+        /* Logo Mejorado (Ejemplo CSS) */
+        .logo-container {
+            margin-bottom: 40px;
+            perspective: 1000px; /* Para efecto 3D */
+        }
+
+        .logo {
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, var(--accent-color) 30%, var(--primary-color) 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(230, 34, 34, 0.4);
+            transform-style: preserve-3d;
+            transition: transform 0.5s var(--cubic-bezier);
+        }
+        .logo:hover {
+            transform: rotateY(20deg) rotateX(10deg) scale(1.1);
+        }
+        /* Icono interno simple (rueda) */
+        .logo::before {
+            content: '';
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            border: 10px solid var(--text-color);
+            border-radius: 50%;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+        }
+        .logo::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 50%;
+            background-color: var(--text-color);
+            top: 15%;
+            border-radius: 5px;
+            transform-origin: bottom center;
+            animation: spin 4s linear infinite; /* Animación de giro */
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem); /* Responsive font size */
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            font-weight: 700;
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
+            color: var(--text-color);
+        }
+
+        h1 span {
+            color: var(--primary-color);
+            display: inline-block; /* Para animaciones individuales si se desea */
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            margin-bottom: 40px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 35px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 25px rgba(230, 34, 34, 0.3);
+            transition: all var(--transition-speed) ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left var(--transition-speed) ease;
+            z-index: -1;
+        }
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(230, 34, 34, 0.5);
+            background-color: var(--accent-color);
+        }
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* --- Navegación --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(24, 24, 24, 0.8); /* Negro semi-transparente */
+            backdrop-filter: blur(10px); /* Efecto cristal */
+            z-index: 1000;
+            transition: all var(--transition-speed) ease-in-out;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        nav.scrolled {
+            padding: 10px 0;
+            background-color: rgba(17, 17, 17, 0.9); /* Más opaco al hacer scroll */
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1300px; /* Un poco más ancho */
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-logo {
+            font-size: 1.6rem;
+            font-weight: 700; /* Más bold */
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            letter-spacing: 1px;
+        }
+        .nav-logo span { color: var(--primary-color); }
+
+        .nav-logo-icon { /* Simplificado */
+            width: 35px;
+            height: 35px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            /* Podría ser un icono SVG o FontAwesome aquí */
+            content: 'M'; /* Letra M como placeholder */
+        }
+
+        .nav-links { display: flex; list-style: none; }
+        .nav-links li { margin-left: 35px; }
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            position: relative;
+            padding: 8px 0;
+            transition: color var(--transition-speed);
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px; /* Más grueso */
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            border-radius: 2px;
+            transition: width var(--transition-speed) ease;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary-color); }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        /* --- Menú Móvil --- */
+        .mobile-menu-btn { display: none; cursor: pointer; z-index: 1001; }
+        .mobile-menu-btn .bar {
+            width: 28px;
+            height: 3px;
+            background-color: var(--text-color);
+            margin: 6px 0;
+            transition: all var(--transition-speed) ease;
+            border-radius: 3px;
+        }
+        /* Animación X para botón menú móvil */
+        .mobile-menu-btn.active .bar:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+        .mobile-menu-btn.active .bar:nth-child(2) { opacity: 0; }
+        .mobile-menu-btn.active .bar:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+        /* --- Secciones Generales --- */
+        section {
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden; /* Para efectos de fondo */
+            opacity: 0; /* Para animación de aparición */
+            transform: translateY(50px); /* Para animación de aparición */
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        .section-title { text-align: center; margin-bottom: 70px; }
+        .section-title h2 {
+            font-size: clamp(2rem, 5vw, 2.8rem);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            display: inline-block;
+            position: relative;
+            padding-bottom: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background: var(--primary-color);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        .section-title p { /* Subtítulo opcional */
+            font-size: 1.1rem;
+            color: #aaa;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- Botón Añadir Evento (con contraseña) --- */
+        .add-event-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            margin-top: 20px;
+        }
+        .add-event-button:hover {
+            background-color: var(--accent-color);
+        }
+
+        /* --- Formulario Añadir Evento (Oculto por defecto) --- */
+        #add-event-form-container {
+            display: none; /* Oculto inicialmente */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-speed), visibility var(--transition-speed);
+        }
+        #add-event-form-container.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #add-event-form {
+            background-color: var(--background-light);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        #add-event-form h3 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-weight: 500;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group input[type="url"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--background-dark);
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(230, 34, 34, 0.3);
+        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        #add-event-form button {
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: background-color var(--transition-speed);
+            margin-right: 10px;
+        }
+        #add-event-form button:hover { background-color: var(--accent-color); }
+        #add-event-form button[type="button"] {
+            background-color: #6c757d;
+        }
+        #add-event-form button[type="button"]:hover {
+            background-color: #5a6268;
+        }
+        .close-form-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 2rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity var(--transition-speed);
+        }
+        .close-form-btn:hover { opacity: 1; }
+
+        /* --- Sección de Eventos --- */
+        #eventos { background-color: var(--background-light); }
+        .eventos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 40px; /* Más espacio */
+        }
+
+        .evento-card {
+            background-color: var(--background-dark);
+            border-radius: 15px; /* Más redondeado */
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform var(--transition-speed) var(--cubic-bezier), box-shadow var(--transition-speed) ease;
+            cursor: pointer; /* Indica que es clickeable */
+            position: relative; /* Para pseudo-elementos */
+        }
+        .evento-card::before { /* Efecto de borde sutil */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            transition: border-color var(--transition-speed);
+            pointer-events: none;
+        }
+        .evento-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        .evento-card:hover::before { border-color: var(--primary-color); }
+
+        .evento-img {
+            height: 220px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .evento-img::after { /* Degradado suave */
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to top, rgba(24, 24, 24, 0.8), transparent);
+        }
+
+        .evento-date {
+            position: absolute;
+            top: 15px; /* Más separado */
+            right: 15px;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(230, 34, 34, 0.3);
+            z-index: 1;
+        }
+
+        .evento-content { padding: 25px; position: relative; z-index: 1; }
+        .evento-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        .evento-desc {
+            color: #bbb; /* Más claro */
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            display: -webkit-box; /* Limitar líneas de texto */
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .evento-details {
+            display: flex;
+            align-items: center;
+            color: #999;
+            font-size: 0.85rem;
+            flex-wrap: wrap; /* Para móviles */
+        }
+        .evento-details i {
+            margin-right: 6px;
+            color: var(--primary-color);
+            font-size: 1rem; /* Iconos más grandes */
+        }
+        .evento-location, .evento-time { display: flex; align-items: center; margin-right: 20px; margin-bottom: 5px; }
+
+        /* --- Calendario --- */
+        #calendario { background-color: var(--background-dark); }
+        .calendar-container {
+            background-color: var(--background-light);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #444;
+        }
+        .calendar-nav { display: flex; align-items: center; }
+        .calendar-nav button {
+            background: none;
+            border: 1px solid #555;
+            color: var(--text-color);
+            font-size: 1.8rem; /* Más grande */
+            cursor: pointer;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed), transform var(--transition-speed);
+            margin: 0 5px;
+        }
+        .calendar-nav button:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        .current-month {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0 25px;
+            color: var(--primary-color);
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+        .calendar-weekday {
+            text-align: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            padding: 10px;
+            color: #aaa;
+        }
+        .calendar-day {
+            text-align: center;
+            padding: 15px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            position: relative;
+            border: 1px solid transparent;
+            font-weight: 500;
+        }
+        .calendar-day:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            transform: scale(1.05);
+        }
+        .calendar-day.has-event {
+            font-weight: 700;
+            color: var(--accent-color); /* Resalta días con eventos */
+            position: relative;
+        }
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            bottom: 8px; /* Un poco más arriba */
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px var(--primary-color);
+        }
+        .calendar-day.today {
+            background-color: var(--primary-color);
+            color: white !important; /* Sobrescribe otros colores */
+            font-weight: bold;
+            border-color: var(--primary-color);
+        }
+        .calendar-day.other-month { opacity: 0.3; cursor: default; pointer-events: none; }
+        .calendar-day.selected { /* Para indicar el día seleccionado */
+            background-color: rgba(230, 34, 34, 0.5);
+            border-color: var(--primary-color);
+        }
+
+        /* --- Sección Galería Mejorada --- */
+        #galeria { background-color: var(--background-light); }
+
+        /* Featured Gallery (Nuevo) */
+        .featured-gallery {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Columna principal más grande */
+            grid-template-rows: auto auto;
+            gap: 15px;
+            margin-bottom: 50px;
+            height: 500px; /* Altura fija para el contenedor */
+        }
+        .featured-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+            cursor: pointer;
+        }
+        .featured-item:hover {
+             transform: scale(1.03);
+             box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+        }
+        .featured-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .featured-item-main {
+            grid-column: 1 / 2;
+            grid-row: 1 / 3; /* Ocupa ambas filas */
+        }
+        .featured-item-secondary-1 {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+        }
+        .featured-item-secondary-2 {
+            grid-column: 2 / 3;
+            grid-row: 2 / 3;
+        }
+        /* Overlay para featured items */
+        .featured-item .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
+            color: white;
+            opacity: 0; /* Oculto por defecto */
+            transform: translateY(20px);
+            transition: opacity var(--transition-speed), transform var(--transition-speed);
+        }
+        .featured-item:hover .gallery-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .featured-item .gallery-overlay h3 { font-size: 1.1rem; margin-bottom: 5px; }
+        .featured-item .gallery-overlay p { font-size: 0.85rem; opacity: 0.8; }
+
+        /* Filtros Galería */
+        .gallery-filter {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* Para móviles */
+            margin-bottom: 50px;
+            gap: 10px;
+        }
+        .filter-btn {
+            background: transparent;
+            border: 2px solid #555;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            padding: 10px 25px; /* Más padding */
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 50px; /* Píldora */
+            transition: all var(--transition-speed) ease;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .filter-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: #777;
+        }
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(230, 34, 34, 0.3);
+        }
+
+        /* Grid Principal de Galería */
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Ligeramente más pequeño */
+            gap: 25px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            aspect-ratio: 1 / 1;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+            opacity: 1; /* Para animación de filtrado */
+            transform: scale(1); /* Para animación de filtrado */
+        }
+        .gallery-item.hidden { /* Para animación de filtrado */
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease, width 0s linear 0.4s, height 0s linear 0.4s, margin 0s linear 0.4s, padding 0s linear 0.4s; /* Retrasa la desaparición física */
+            pointer-events: none;
+            width: 0 !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+
+        .gallery-item img,
+        .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-speed) ease, filter var(--transition-speed) ease;
+        }
+        .gallery-item:hover img,
+        .gallery-item:hover video {
+            transform: scale(1.08); /* Más zoom */
+            filter: brightness(0.8); /* Oscurece un poco */
+        }
+        /* Overlay para items del grid */
+        .gallery-item .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 100%);
+            color: white;
+            transform: translateY(100%);
+            opacity: 0;
+            transition: transform var(--transition-speed) ease, opacity var(--transition-speed) ease;
+            pointer-events: none; /* No interfiere con hover de imagen */
+        }
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .gallery-overlay h3 { margin-bottom: 5px; font-size: 1.1rem; }
+        .gallery-overlay p { font-size: 0.9rem; opacity: 0.8; }
+
+        /* --- Modal Galería --- */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95); /* Más oscuro */
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-speed), visibility var(--transition-speed);
+            padding: 20px;
+        }
+        .modal.active { opacity: 1; visibility: visible; }
+        .modal-content {
+            max-width: 90%;
+            max-height: 85vh; /* Un poco más de espacio vertical */
+            position: relative; /* Para caption */
+            transform: scale(0.8); /* Animación de entrada */
+            transition: transform var(--transition-speed) var(--cubic-bezier);
+        }
+        .modal.active .modal-content { transform: scale(1); }
+
+        .modal-content img,
+        .modal-content video {
+            display: block; /* Evita espacio extra debajo */
+            max-width: 100%;
+            max-height: 85vh;
+            border-radius: 5px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .modal-close {
+            position: absolute;
+            top: -10px; /* Ligeramente fuera */
+            right: -10px;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            background-color: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1;
+            transition: transform var(--transition-speed), background-color var(--transition-speed);
+        }
+        .modal-close:hover {
+            transform: rotate(90deg);
+            background-color: var(--primary-color);
+        }
+        .modal-caption {
+            position: absolute;
+            bottom: -40px; /* Debajo de la imagen */
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            padding: 10px;
+            background-color: rgba(0,0,0,0.7);
+            border-radius: 0 0 5px 5px;
+        }
+        .modal-caption h3 { font-size: 1.2rem; margin-bottom: 5px; }
+        .modal-caption p { font-size: 0.9rem; opacity: 0.8; }
+
+        /* --- Vista Detalle Evento (Oculta por defecto) --- */
+        #event-detail-view {
+            display: none; /* Oculto inicialmente */
+            padding: 80px 20px 40px; /* Padding superior para dejar espacio a nav */
+            background-color: var(--background-dark);
+            min-height: 100vh;
+            position: relative;
+            z-index: 500; /* Debajo de nav y modal */
+            opacity: 0;
+            transition: opacity var(--transition-speed);
+        }
+        #event-detail-view.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        .event-detail-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--background-light);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .event-detail-header {
+            border-bottom: 1px solid #444;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .event-detail-header h2 { /* Título del evento */
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .event-info { display: flex; flex-wrap: wrap; gap: 20px; color: #ccc; }
+        .event-info div { display: flex; align-items: center; }
+        .event-info i { margin-right: 8px; color: var(--primary-color); font-size: 1.2rem; }
+        .event-info a { color: var(--accent-color); text-decoration: none; }
+        .event-info a:hover { text-decoration: underline; }
+
+        .event-detail-content h3 {
+            font-size: 1.6rem;
+            color: var(--text-color);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            display: inline-block;
+        }
+        .event-description { line-height: 1.7; color: #ddd; }
+        .event-tags span {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: var(--accent-color);
+            padding: 5px 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Packlist con Checkboxes */
+        .event-packlist ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .event-packlist li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            background-color: rgba(255,255,255,0.05);
+            border-radius: 5px;
+            transition: background-color var(--transition-speed);
+        }
+        .event-packlist li:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .event-packlist input[type="checkbox"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary-color); /* Estiliza el checkbox */
+            cursor: pointer;
+        }
+        .event-packlist label {
+            color: #ccc;
+            transition: color var(--transition-speed), text-decoration var(--transition-speed);
+        }
+        .event-packlist input[type="checkbox"]:checked + label {
+            color: #888;
+            text-decoration: line-through;
+        }
+
+        /* Galería del Evento */
+        .event-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .event-gallery img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .event-gallery img:hover {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
+
+        /* Comentarios del Evento */
+        .event-comments-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px; /* Espacio para scrollbar */
+        }
+        .comment {
+            background-color: var(--background-dark);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .comment p { margin: 0; color: #ddd; }
+        .comment small { color: #888; font-size: 0.8rem; }
+
+        .add-comment-form textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--background-dark);
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: var(--text-color);
+            min-height: 80px;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+        .add-comment-form button {
+             padding: 10px 20px;
+             background-color: var(--primary-color);
+             color: white;
+             border: none;
+             border-radius: 5px;
+             cursor: pointer;
+             font-weight: 500;
+             transition: background-color var(--transition-speed);
+        }
+         .add-comment-form button:hover { background-color: var(--accent-color); }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color var(--transition-speed);
+        }
+        .back-button:hover { background-color: #5a6268; }
+
+        /* --- Footer --- */
+        footer {
+            background-color: var(--secondary-color);
+            padding: 80px 20px 40px; /* Más padding superior */
+            position: relative;
+        }
+        footer::before { /* Efecto de fondo sutil */
+            content: '';
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+            opacity: 0.05;
+            bottom: -120px;
+            left: 10%;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 60px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-column h3 {
+            color: var(--text-color);
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            position: relative;
+            padding-bottom: 15px;
+            font-weight: 600;
+        }
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        .footer-column p { color: #aaa; line-height: 1.7; margin-bottom: 20px; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color var(--transition-speed), padding-left var(--transition-speed);
+            display: inline-block; /* Para padding */
+        }
+        .footer-links a:hover { color: var(--primary-color); padding-left: 8px; }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #aaa;
+        }
+        .footer-contact-item i {
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            width: 25px; /* Alineación */
+            text-align: center;
+        }
+        .footer-contact-item span { flex: 1; }
+
+        /* Iconos Sociales Mejorados */
+        .social-icons { display: flex; margin-top: 25px; gap: 15px; }
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.3rem; /* Tamaño del icono */
+            transition: all var(--transition-speed) ease;
+        }
+        .social-icon:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-5px) scale(1.1);
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* --- Barra de Búsqueda (Opcional, podría ir en Nav) --- */
+        .search-container {
+            margin: 40px auto 0; /* Centrado y con margen */
+            max-width: 500px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px; /* Espacio para icono */
+            font-size: 1rem;
+            border-radius: 50px;
+            border: 1px solid #555;
+            background-color: var(--background-light);
+            color: var(--text-color);
+            transition: all var(--transition-speed);
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(230, 34, 34, 0.2);
+        }
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 1.2rem;
+        }
+
+        /* --- Animaciones y Utilidades --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 992px) {
+            .featured-gallery {
+                grid-template-columns: 1fr; /* Apilados en una columna */
+                height: auto; /* Altura automática */
+            }
+            .featured-item-main,
+            .featured-item-secondary-1,
+            .featured-item-secondary-2 {
+                grid-column: 1 / -1; /* Ocupan toda la fila */
+                grid-row: auto;
+                height: 300px; /* Altura fija para mantener consistencia */
+            }
+            .featured-item-main { height: 400px; } /* La principal más grande */
+        }
+
+        @media (max-width: 768px) {
+            h1 { letter-spacing: 4px; }
+            .nav-links {
+                position: fixed;
+                top: 0; /* Empieza desde arriba */
+                left: -100%; /* Oculto a la izquierda */
+                width: 80%;
+                max-width: 300px;
+                height: 100vh;
+                background-color: var(--background-dark);
+                flex-direction: column;
+                align-items: center;
+                padding-top: 100px; /* Espacio para logo y botón cerrar */
+                transition: left var(--transition-speed) ease;
+                box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+                z-index: 1000; /* Encima de la animación unicycle */
+            }
+            .nav-links.active { left: 0; }
+            .nav-links li { margin: 20px 0; width: 100%; text-align: center;}
+            .nav-links a { font-size: 1.1rem; padding: 15px 0; display: block; width: 100%; }
+            .nav-links a::after { bottom: 5px; height: 2px;}
+
+            .mobile-menu-btn { display: block; z-index: 1001; position: relative; } /* Asegura que esté encima */
+            nav.scrolled .mobile-menu-btn { /* Mantiene el botón visible */ }
+
+            .eventos-grid { grid-template-columns: 1fr; }
+            .gallery-container { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+            .gallery-filter { gap: 5px; }
+            .filter-btn { padding: 8px 18px; font-size: 0.85rem; }
+            .footer-content { grid-template-columns: 1fr; }
+            .event-detail-header h2 { font-size: 2rem; }
+            .event-info { font-size: 0.9rem; }
+            #add-event-form { padding: 30px; }
+            .unicycle-animation { display: none; } /* Ocultar en móvil puede ser mejor */
+        }
+
+         /* Font Awesome (Necesitarás añadir el enlace en <head> o importar) */
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+        /* Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    </style>
+    <!-- Carga de Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Animación Monociclo -->
+    <img src="https://img.icons8.com/ios/100/e62222/unicycle.png" alt="Unicycle" class="unicycle-animation">
+
+    <!-- Navegación -->
+    <nav id="main-nav">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo">
+                <div class="nav-logo-icon">M</div> <!-- Icono simple -->
+                <span>Mountain</span>unicycle
+            </a>
+            <div class="mobile-menu-btn" id="mobile-menu">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#home" class="active">Inicio</a></li>
+                <li><a href="#eventos">Eventos</a></li>
+                <li><a href="#calendario">Calendario</a></li>
+                <li><a href="#galeria">Galería</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+                 <!-- Barra de Búsqueda (Opcional en Nav Móvil) -->
+                 <li class="mobile-only-search">
+                     <input type="text" placeholder="Buscar eventos..." class="search-input-mobile">
+                 </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenedor Principal (Para ocultar/mostrar secciones) -->
+    <main id="main-content">
+        <!-- Header / Home -->
+        <header id="home">
+            <div class="parallax-bg"></div>
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo"></div>
+                </div>
+                <h1>Mountain<span>unicycle</span></h1>
+                <div class="subtitle">Desafía la gravedad. Conquista la montaña. Vive la aventura en una sola rueda.</div>
+                <a href="#eventos" class="cta-button">Explora Eventos</a>
+            </div>
+        </header>
+
+        <!-- Sección de Búsqueda (Opcional, puede ir aquí o en header/nav) -->
+        <section id="search-section">
+            <div class="container search-container">
+                 <input type="text" id="search-input" class="search-input" placeholder="Buscar eventos por título, descripción o tag...">
+                 <i class="fas fa-search search-icon"></i>
+            </div>
+        </section>
+
+        <!-- Sección de Eventos -->
+        <section id="eventos">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Próximos Eventos</h2>
+                    <p>Únete a nuestra comunidad y participa en las salidas y competiciones más emocionantes.</p>
+                </div>
+                <div class="eventos-grid" id="eventos-grid">
+                    <!-- Los eventos se cargarán aquí dinámicamente -->
+                    <p id="no-events-message" style="display: none; text-align: center; color: #aaa;">No hay eventos que coincidan con tu búsqueda o no hay eventos próximos.</p>
+                </div>
+                 <!-- Botón para añadir evento -->
+                 <div style="text-align: center; margin-top: 40px;">
+                     <button id="add-event-prompt-btn" class="add-event-button"><i class="fas fa-plus"></i> Añadir Nuevo Evento</button>
+                 </div>
+            </div>
+        </section>
+
+        <!-- Sección de Calendario -->
+        <section id="calendario">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Calendario de Actividades</h2>
+                    <p>Planifica tus aventuras. Encuentra todas nuestras fechas importantes aquí.</p>
+                </div>
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <div class="current-month" id="current-month">Cargando...</div>
+                        <div class="calendar-nav">
+                            <button id="prev-month" aria-label="Mes anterior"><i class="fas fa-chevron-left"></i></button>
+                            <button id="next-month" aria-label="Mes siguiente"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="calendar-weekday">Lun</div>
+                        <div class="calendar-weekday">Mar</div>
+                        <div class="calendar-weekday">Mié</div>
+                        <div class="calendar-weekday">Jue</div>
+                        <div class="calendar-weekday">Vie</div>
+                        <div class="calendar-weekday">Sáb</div>
+                        <div class="calendar-weekday">Dom</div>
+                    </div>
+                     <div class="calendar-days" id="calendar-days">
+                        <!-- Los días se generarán con JavaScript -->
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Galería -->
+        <section id="galeria">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Galería de Momentos</h2>
+                    <p>Revive las mejores aventuras y descubre la pasión del monociclo de montaña.</p>
+                </div>
+
+                <!-- Featured Gallery -->
+                <div class="featured-gallery" id="featured-gallery">
+                    <div class="featured-item featured-item-main" data-index="0">
+                        <img src="https://via.placeholder.com/800x600/E62222/ffffff?text=Aventura+1" alt="Featured Monociclo 1">
+                        <div class="gallery-overlay"><h3>Título Imagen Principal</h3><p>Descripción corta.</p></div>
+                    </div>
+                    <div class="featured-item featured-item-secondary-1" data-index="1">
+                         <img src="https://via.placeholder.com/400x300/111111/ffffff?text=Aventura+2" alt="Featured Monociclo 2">
+                         <div class="gallery-overlay"><h3>Título Secundario 1</h3><p>Otra descripción.</p></div>
+                    </div>
+                    <div class="featured-item featured-item-secondary-2" data-index="2">
+                         <img src="https://via.placeholder.com/400x300/2a2a2a/ffffff?text=Aventura+3" alt="Featured Monociclo 3">
+                         <div class="gallery-overlay"><h3>Título Secundario 2</h3><p>Más detalles.</p></div>
+                    </div>
+                </div>
+
+                <!-- Filtros -->
+                <div class="gallery-filter">
+                    <button class="filter-btn active" data-filter="all">Todos</button>
+                    <button class="filter-btn" data-filter="descensos">Descensos</button>
+                    <button class="filter-btn" data-filter="competicion">Competición</button>
+                    <button class="filter-btn" data-filter="paisajes">Paisajes</button>
+                    <button class="filter-btn" data-filter="videos">Videos</button> <!-- Si añades videos -->
+                </div>
+
+                <!-- Grid Principal -->
+                <div class="gallery-container" id="gallery-container">
+                    <!-- Las imágenes/videos se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+        </section>
+
+         <!-- Footer -->
+        <footer id="contacto">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-column">
+                        <h3><i class="fas fa-mountain-sun"></i> Sobre Mountainunicycle</h3>
+                        <p>Somos la comunidad de referencia para apasionados del monociclo de montaña. Organizamos eventos, rutas y talleres para todos los niveles. ¡Únete a la aventura!</p>
+                        <div class="social-icons">
+                            <a href="#" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="social-icon" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+                            <a href="#" class="social-icon" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h3><i class="fas fa-link"></i> Enlaces Rápidos</h3>
+                        <ul class="footer-links">
+                            <li><a href="#home">Inicio</a></li>
+                            <li><a href="#eventos">Próximos Eventos</a></li>
+                            <li><a href="#calendario">Calendario Completo</a></li>
+                            <li><a href="#galeria">Nuestra Galería</a></li>
+                            <li><a href="#">Blog (Próximamente)</a></li>
+                            <li><a href="#">Política de Privacidad</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3><i class="fas fa-envelope-open-text"></i> Contacto</h3>
+                         <div class="footer-contact-item">
+                             <i class="fas fa-map-marker-alt"></i>
+                             <span>Algún lugar en las montañas, España</span>
+                         </div>
+                         <div class="footer-contact-item">
+                             <i class="fas fa-phone"></i>
+                             <span>+34 600 11 22 33</span>
+                         </div>
+                         <div class="footer-contact-item">
+                             <i class="fas fa-envelope"></i>
+                             <span>info@mountainunicycle.es</span>
+                         </div>
+                         <div class="footer-contact-item">
+                             <i class="fas fa-clock"></i>
+                             <span>Siempre listos para rodar!</span>
+                         </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; <span id="current-year"></span> Mountainunicycle. Todos los derechos reservados. Diseñado con <i class="fas fa-heart" style="color: var(--primary-color);"></i>.</p>
+                </div>
+            </div>
+        </footer>
+    </main> <!-- Fin de main-content -->
+
+    <!-- Formulario para Añadir Evento -->
+    <div id="add-event-form-container">
+        <form id="add-event-form">
+             <button type="button" class="close-form-btn" id="close-event-form" aria-label="Cerrar formulario">&times;</button>
+            <h3><i class="fas fa-calendar-plus"></i> Crear Nuevo Evento</h3>
+            <div class="form-group">
+                <label for="event-title">Título del Evento:</label>
+                <input type="text" id="event-title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="event-date">Fecha:</label>
+                <input type="date" id="event-date" name="date" required>
+            </div>
+            <div class="form-group">
+                <label for="event-location">Lugar:</label>
+                <input type="text" id="event-location" name="location" placeholder="Ej: Sierra Nevada, Granada" required>
+            </div>
+            <div class="form-group">
+                <label for="event-map-link">Enlace Google Maps (Opcional):</label>
+                <input type="url" id="event-map-link" name="mapLink" placeholder="https://goo.gl/maps/...">
+            </div>
+            <div class="form-group">
+                <label for="event-description">Descripción:</label>
+                <textarea id="event-description" name="description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="event-tags">Tags (separados por comas):</label>
+                <input type="text" id="event-tags" name="tags" placeholder="Ej: descenso, técnico, fin de semana">
+            </div>
+            <div class="form-group">
+                <label for="event-packlist">Packlist (un ítem por línea):</label>
+                <textarea id="event-packlist" name="packlist" placeholder="Monociclo\nCasco\nAgua\nProtecciones..."></textarea>
+            </div>
+             <div class="form-group">
+                 <label>Imágenes (URLs separadas por comas, opcional):</label>
+                 <input type="text" id="event-images" name="images" placeholder="url1.jpg, url2.png,...">
+             </div>
+            <div style="text-align: right;">
+                <button type="button" id="cancel-event-form">Cancelar</button>
+                <button type="submit">Crear Evento</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Vista Detalle del Evento (Oculta por defecto) -->
+    <div id="event-detail-view">
+        <div class="event-detail-container">
+            <button class="back-button" id="back-to-main"><i class="fas fa-arrow-left"></i> Volver a Eventos</button>
+
+            <div class="event-detail-header">
+                <h2 id="detail-event-title">Título del Evento</h2>
+                <div class="event-info">
+                    <div id="detail-event-date"><i class="fas fa-calendar-alt"></i> <span>Fecha</span></div>
+                    <div id="detail-event-location"><i class="fas fa-map-marker-alt"></i> <span>Lugar</span></div>
+                    <div id="detail-event-map-link" style="display:none;"><i class="fas fa-map"></i> <a href="#" target="_blank">Ver en Google Maps</a></div>
+                </div>
+            </div>
+
+            <div class="event-detail-content">
+                <h3><i class="fas fa-info-circle"></i> Descripción</h3>
+                <p id="detail-event-description" class="event-description">Descripción detallada del evento...</p>
+
+                <h3><i class="fas fa-tags"></i> Tags</h3>
+                <div id="detail-event-tags" class="event-tags">
+                    <!-- Tags se añadirán aquí -->
+                </div>
+
+                <h3><i class="fas fa-clipboard-list"></i> Packlist</h3>
+                <div id="detail-event-packlist" class="event-packlist">
+                    <ul>
+                        <!-- Items de la packlist se añadirán aquí -->
+                    </ul>
+                </div>
+
+                <h3><i class="fas fa-images"></i> Galería del Evento</h3>
+                <div id="detail-event-gallery" class="event-gallery">
+                    <!-- Imágenes del evento se añadirán aquí -->
+                     <p>No hay imágenes específicas para este evento.</p>
+                </div>
+
+                <h3><i class="fas fa-comments"></i> Comentarios</h3>
+                <div id="detail-event-comments-list" class="event-comments-list">
+                    <!-- Comentarios se añadirán aquí -->
+                    <p>Sé el primero en comentar.</p>
+                </div>
+                <form id="add-comment-form" class="add-comment-form">
+                    <input type="hidden" id="comment-event-id">
+                    <textarea id="comment-text" placeholder="Escribe tu comentario..." required></textarea>
+                    <button type="submit">Añadir Comentario</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal para la galería -->
+    <div class="modal" id="gallery-modal">
+        <span class="modal-close" id="modal-close" aria-label="Cerrar modal">&times;</span>
+        <div class="modal-content" id="modal-content">
+            <!-- Contenido (img/video) generado por JS -->
+        </div>
+        <div class="modal-caption" id="modal-caption">
+             <!-- Caption generado por JS -->
+        </div>
+    </div>
+
+    <script>
+        // --- Variables Globales y Selectores ---
+        const nav = document.getElementById('main-nav');
+        const mobileMenuBtn = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+        const mainContent = document.getElementById('main-content');
+        const eventDetailView = document.getElementById('event-detail-view');
+        const backToMainBtn = document.getElementById('back-to-main');
+        const addEventPromptBtn = document.getElementById('add-event-prompt-btn');
+        const addEventFormContainer = document.getElementById('add-event-form-container');
+        const addEventForm = document.getElementById('add-event-form');
+        const closeEventFormBtn = document.getElementById('close-event-form');
+        const cancelEventFormBtn = document.getElementById('cancel-event-form');
+        const galleryContainer = document.getElementById('gallery-container');
+        const featuredGalleryContainer = document.getElementById('featured-gallery');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const modal = document.getElementById('gallery-modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalCaption = document.getElementById('modal-caption');
+        const modalClose = document.getElementById('modal-close');
+        const calendarDaysContainer = document.getElementById('calendar-days');
+        const currentMonthEl = document.getElementById('current-month');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        const eventosGrid = document.getElementById('eventos-grid');
+        const noEventsMessage = document.getElementById('no-events-message');
+        const searchInput = document.getElementById('search-input');
+        const currentYearSpan = document.getElementById('current-year');
+
+        // --- Datos (Simulación de Base de Datos) ---
+        // IMPORTANTE: Estos datos se perderán al recargar la página.
+        // Para persistencia real, se necesitaría un backend o localStorage (limitado).
+        let eventos = [
+             {
+                id: 1,
+                title: 'Descenso Épico en Sierra Nevada',
+                date: '2025-05-15',
+                location: 'Sierra Nevada, Granada',
+                mapLink: 'https://goo.gl/maps/example1',
+                description: 'Una experiencia inolvidable descendiendo por las laderas más desafiantes de Sierra Nevada. Apto para riders de nivel medio-alto. Incluye remontes y avituallamiento.',
+                tags: ['descenso', 'montaña', 'granada', 'findesemana', 'técnico'],
+                packlistItems: ['Monociclo de montaña', 'Casco integral', 'Protecciones (rodilleras, coderas)', 'Mochila hidratación (2L)', 'Herramientas básicas', 'Barritas energéticas', 'Gafas', 'Guantes'],
+                photos: [
+                    'https://via.placeholder.com/600x400/e62222/fff?text=Sierra+Nevada+1',
+                    'https://via.placeholder.com/600x400/111/fff?text=Sierra+Nevada+2',
+                    'https://via.placeholder.com/600x400/2a2a2a/fff?text=Sierra+Nevada+3'
+                    ],
+                comments: [
+                    { user: 'RiderPro', text: '¡Increíble evento! La organización fue genial.' },
+                    { user: 'MonoAdicta', text: 'El descenso más duro que he hecho, ¡pero valió la pena!' }
+                ]
+            },
+            {
+                id: 2,
+                title: 'Competición Nacional "Rey de la Montaña"',
+                date: '2025-06-22',
+                location: 'Bike Park La Pinilla, Segovia',
+                mapLink: 'https://goo.gl/maps/example2',
+                description: 'Demuestra quién es el rey (o reina) del monociclo de montaña en España. Categorías: Descenso Cronometrado (DH), Cross Country (XC) y Trial.',
+                tags: ['competicion', 'dh', 'xc', 'trial', 'segovia', 'nacional'],
+                packlistItems: ['Monociclo específico (DH/XC/Trial)', 'Licencia federativa', 'DNI', 'Kit antipinchazos', 'Casco homologado', 'Protección dorsal (recomendado DH)', 'Agua y comida'],
+                photos: [
+                    'https://via.placeholder.com/600x400/ff4444/fff?text=Competición+1',
+                    'https://via.placeholder.com/600x400/333/fff?text=Competición+2'
+                    ],
+                comments: []
+            },
+            {
+                id: 3,
+                title: 'Taller de Técnicas Avanzadas y Saltos',
+                date: '2025-07-08',
+                location: 'Bike Park Vallnord, Andorra',
+                mapLink: 'https://goo.gl/maps/example3',
+                description: 'Perfecciona tu técnica con instructores profesionales. Aprende a afrontar saltos, drops y zonas técnicas con seguridad y estilo. Plazas limitadas.',
+                tags: ['taller', 'técnica', 'saltos', 'andorra', 'formacion'],
+                packlistItems: ['Monociclo (preferiblemente robusto)', 'Protecciones completas', 'Casco', 'Ropa cómoda', 'Calzado adecuado', '¡Ganas de aprender!'],
+                photos: [],
+                comments: []
+            },
+             {
+                id: 4,
+                title: 'Ruta Paisajística por los Pirineos',
+                date: '2025-08-10',
+                location: 'Parque Nacional Ordesa y Monte Perdido',
+                mapLink: '', // Sin enlace de mapa específico
+                description: 'Disfruta de una ruta de nivel medio por uno de los parajes más espectaculares de España. Ritmo tranquilo, ideal para disfrutar del paisaje y la compañía.',
+                tags: ['ruta', 'paisajes', 'pirineos', 'nivel medio', 'grupo'],
+                packlistItems: ['Monociclo (26" o 29" recomendado)', 'Casco', 'Agua abundante', 'Comida (picnic)', 'Crema solar', 'Cámara de fotos', 'Ropa de abrigo (por si acaso)'],
+                photos: [
+                    'https://via.placeholder.com/600x400/28a745/fff?text=Pirineos+1',
+                    'https://via.placeholder.com/600x400/6c757d/fff?text=Pirineos+2',
+                    'https://via.placeholder.com/600x400/007bff/fff?text=Pirineos+3',
+                     'https://via.placeholder.com/600x400/ffc107/000?text=Pirineos+4'
+                    ],
+                comments: [ { user: 'NaturalezaFan', text: 'Paisajes impresionantes, ¡repetiré!' }]
+            }
+        ];
+
+        let galleryData = [ // Datos separados para la galería general
+            { id: 'g1', src: 'https://via.placeholder.com/600x600/E62222/ffffff?text=Descenso+1', alt: 'Descenso monociclo montaña', title: 'Adrenalina Pura', desc: 'Bajando a toda velocidad.', category: 'descensos' },
+            { id: 'g2', src: 'https://via.placeholder.com/600x600/111111/ffffff?text=Competición+Podio', alt: 'Podio competición monociclo', title: '¡Victoria!', desc: 'Celebrando en el podio.', category: 'competicion' },
+            { id: 'g3', src: 'https://via.placeholder.com/600x600/2a2a2a/ffffff?text=Paisaje+Montaña', alt: 'Monociclo con vistas', title: 'Cima Conquistada', desc: 'Vistas increíbles desde arriba.', category: 'paisajes' },
+            { id: 'g4', src: 'https://via.placeholder.com/600x600/ff4444/ffffff?text=Salto+Monociclo', alt: 'Salto con monociclo', title: 'Volando Bajo', desc: 'Técnica y control en el aire.', category: 'descensos competicion' },
+             { id: 'g5', src: 'https://via.placeholder.com/600x600/28a745/ffffff?text=Grupo+Ruta', alt: 'Grupo de monociclistas', title: 'Aventura en Grupo', desc: 'Compartiendo la pasión.', category: 'paisajes' },
+             { id: 'g6', src: 'https://via.placeholder.com/600x600/007bff/ffffff?text=Monociclo+Detalle', alt: 'Detalle monociclo de montaña', title: 'La Máquina', desc: 'Preparada para la acción.', category: 'descensos' },
+             { id: 'g7', src: 'https://via.placeholder.com/600x600/6c757d/ffffff?text=Trial+Obstáculo', alt: 'Monociclo trial superando obstáculo', title: 'Precisión Milimétrica', desc: 'Superando retos de trial.', category: 'competicion' },
+             { id: 'g8', src: 'https://via.placeholder.com/600x600/ffc107/000000?text=Atardecer+Montaña', alt: 'Monociclo al atardecer', title: 'Final del Día', desc: 'Disfrutando la puesta de sol.', category: 'paisajes' }
+             // Añadir más items si es necesario
+        ];
+
+        // --- Estado de la Aplicación ---
+        let currentDate = new Date();
+        let currentFilter = 'all'; // Filtro de galería activo
+        let currentSearchTerm = ''; // Término de búsqueda activo
+
+        // --- Funciones ---
+
+        // Navegación y UI General
+        const handleScroll = () => {
+            if (window.scrollY > 80) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+
+            // Activar link de navegación según sección visible
+            let currentSection = '';
+            document.querySelectorAll('section[id]').forEach(section => {
+                const sectionTop = section.offsetTop - 100; // Ajuste para el nav fijo
+                if (window.scrollY >= sectionTop) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                } else if (!currentSection && link.getAttribute('href') === '#home') {
+                     link.classList.add('active'); // Activar Inicio si está arriba del todo
+                }
+            });
+        };
+
+        const toggleMobileMenu = () => {
+            mobileMenuBtn.classList.toggle('active');
+            navLinks.classList.toggle('active');
+            // Opcional: Bloquear scroll del body cuando el menú está abierto
+            document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+        };
+
+        const closeMobileMenu = () => {
+             mobileMenuBtn.classList.remove('active');
+             navLinks.classList.remove('active');
+             document.body.style.overflow = '';
+        };
+
+        // Animación de secciones al hacer scroll (Intersection Observer)
+        const handleSectionIntersection = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Deja de observar una vez visible
+                }
+            });
+        };
+
+        // Gestión de Eventos (CRUD Simulado)
+        const showEventDetail = (eventId) => {
+            const event = eventos.find(e => e.id === eventId);
+            if (!event) return;
+
+            // Rellenar datos
+            document.getElementById('detail-event-title').textContent = event.title;
+            document.getElementById('detail-event-date').querySelector('span').textContent = formatDate(event.date);
+            document.getElementById('detail-event-location').querySelector('span').textContent = event.location;
+
+            const mapLinkDiv = document.getElementById('detail-event-map-link');
+            const mapLinkA = mapLinkDiv.querySelector('a');
+            if (event.mapLink) {
+                mapLinkA.href = event.mapLink;
+                mapLinkDiv.style.display = 'flex';
+            } else {
+                mapLinkDiv.style.display = 'none';
+            }
+
+            document.getElementById('detail-event-description').textContent = event.description;
+
+            // Tags
+            const tagsContainer = document.getElementById('detail-event-tags');
+            tagsContainer.innerHTML = '';
+            event.tags.forEach(tag => {
+                const span = document.createElement('span');
+                span.textContent = tag.trim();
+                tagsContainer.appendChild(span);
+            });
+
+            // Packlist
+            const packlistContainer = document.getElementById('detail-event-packlist').querySelector('ul');
+            packlistContainer.innerHTML = '';
+            event.packlistItems.forEach((item, index) => {
+                const li = document.createElement('li');
+                const checkboxId = `packlist-${event.id}-${index}`;
+                li.innerHTML = `
+                    <input type="checkbox" id="${checkboxId}" data-event-id="${event.id}" data-item-index="${index}">
+                    <label for="${checkboxId}">${item.trim()}</label>
+                `;
+                // Añadir listener para el checkbox (estado no persistente)
+                li.querySelector('input').addEventListener('change', (e) => {
+                     // Aquí podríamos guardar el estado en localStorage si quisiéramos
+                     console.log(`Checkbox ${item} para evento ${event.id} cambiado a: ${e.target.checked}`);
+                 });
+                packlistContainer.appendChild(li);
+            });
+
+             // Galería del evento
+            const eventGalleryContainer = document.getElementById('detail-event-gallery');
+            eventGalleryContainer.innerHTML = ''; // Limpiar anterior
+            if (event.photos && event.photos.length > 0) {
+                event.photos.forEach(photoUrl => {
+                    const img = document.createElement('img');
+                    img.src = photoUrl;
+                    img.alt = `Imagen del evento ${event.title}`;
+                    // Opcional: Abrir en modal al hacer clic
+                    img.addEventListener('click', () => openModal(img.src, event.title, 'Imagen del evento'));
+                    eventGalleryContainer.appendChild(img);
+                });
+            } else {
+                eventGalleryContainer.innerHTML = '<p style="color: #aaa;">No hay imágenes específicas para este evento.</p>';
+            }
+
+            // Comentarios
+            renderComments(eventId);
+            document.getElementById('comment-event-id').value = eventId;
+            document.getElementById('comment-text').value = ''; // Limpiar textarea
+
+            // Mostrar vista de detalle y ocultar principal
+            mainContent.style.display = 'none';
+            eventDetailView.classList.add('visible');
+            window.scrollTo(0, 0); // Scroll al inicio de la página
+        };
+
+        const hideEventDetail = () => {
+            mainContent.style.display = 'block';
+            eventDetailView.classList.remove('visible');
+             // Forzar re-renderizado de eventos por si hubo cambios
+            renderEventos();
+            renderCalendar();
+        };
+
+        const renderComments = (eventId) => {
+            const event = eventos.find(e => e.id === eventId);
+            const commentsList = document.getElementById('detail-event-comments-list');
+            commentsList.innerHTML = '';
+
+            if (event.comments && event.comments.length > 0) {
+                event.comments.forEach(comment => {
+                    const div = document.createElement('div');
+                    div.classList.add('comment');
+                    div.innerHTML = `
+                        <p>${comment.text}</p>
+                        <small>Por: ${comment.user || 'Anónimo'} - ${comment.timestamp ? formatDate(comment.timestamp, true) : 'Hace un momento'}</small>
+                    `;
+                    commentsList.appendChild(div);
+                });
+            } else {
+                commentsList.innerHTML = '<p style="color: #aaa;">Sé el primero en comentar.</p>';
+            }
+        };
+
+        const handleAddComment = (e) => {
+            e.preventDefault();
+            const eventId = parseInt(document.getElementById('comment-event-id').value);
+            const commentText = document.getElementById('comment-text').value.trim();
+
+            if (!commentText || !eventId) return;
+
+            const event = eventos.find(e => e.id === eventId);
+            if (event) {
+                const newComment = {
+                    user: 'UsuarioActual', // Simulado, podría venir de un login
+                    text: commentText,
+                    timestamp: new Date().toISOString()
+                };
+                event.comments.push(newComment);
+                renderComments(eventId); // Re-renderizar comentarios
+                document.getElementById('comment-text').value = ''; // Limpiar
+            }
+        };
+
+        const promptAddEvent = () => {
+            const password = prompt('Por favor, introduce la contraseña para añadir un evento:');
+            if (password === 'MuniMuni') {
+                addEventFormContainer.classList.add('visible');
+                addEventForm.reset(); // Limpiar formulario por si quedó algo
+            } else if (password !== null) { // Si no presionó cancelar
+                alert('Contraseña incorrecta.');
+            }
+        };
+
+        const closeEventForm = () => {
+             addEventFormContainer.classList.remove('visible');
+        };
+
+        const handleCreateEvent = (e) => {
+            e.preventDefault();
+            const formData = new FormData(addEventForm);
+            const newEvent = {
+                id: Date.now(), // ID único simple basado en timestamp
+                title: formData.get('title'),
+                date: formData.get('date'),
+                location: formData.get('location'),
+                mapLink: formData.get('mapLink') || '',
+                description: formData.get('description'),
+                tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag), // Array de tags
+                packlistItems: formData.get('packlist').split('\n').map(item => item.trim()).filter(item => item), // Array de items
+                photos: formData.get('images').split(',').map(url => url.trim()).filter(url => url), // Array de URLs de fotos
+                comments: [] // Comentarios empiezan vacíos
+            };
+
+            eventos.push(newEvent);
+            eventos.sort((a, b) => new Date(a.date) - new Date(b.date)); // Ordenar por fecha
+
+            console.log("Nuevo evento añadido:", newEvent);
+            console.log("Todos los eventos:", eventos);
+
+            closeEventForm();
+            renderEventos(); // Actualizar la lista de eventos
+            renderCalendar(); // Actualizar el calendario
+            alert('¡Evento creado con éxito!');
+        };
+
+        // Formateo de Fechas
+        const formatDate = (dateString, includeTime = false) => {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const date = new Date(dateString);
+             // Ajustar por zona horaria local para evitar problemas de "un día menos"
+             date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+
+             if (includeTime) {
+                 options.hour = '2-digit';
+                 options.minute = '2-digit';
+             }
+            return date.toLocaleDateString('es-ES', options);
+        };
+
+        // Renderizado de Eventos en Grid
+        const renderEventos = () => {
+            eventosGrid.innerHTML = ''; // Limpiar grid
+            const filteredEventos = eventos.filter(event => {
+                 const searchTerm = currentSearchTerm.toLowerCase();
+                 if (!searchTerm) return true; // Si no hay búsqueda, mostrar todos
+
+                 const titleMatch = event.title.toLowerCase().includes(searchTerm);
+                 const descMatch = event.description.toLowerCase().includes(searchTerm);
+                 const tagsMatch = event.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                 const locationMatch = event.location.toLowerCase().includes(searchTerm);
+
+                 return titleMatch || descMatch || tagsMatch || locationMatch;
+            }).sort((a, b) => new Date(a.date) - new Date(b.date)); // Asegurar orden
+
+            if (filteredEventos.length === 0) {
+                noEventsMessage.style.display = 'block';
+            } else {
+                 noEventsMessage.style.display = 'none';
+                 filteredEventos.forEach(event => {
+                     const card = document.createElement('div');
+                     card.classList.add('evento-card');
+                     card.dataset.eventId = event.id; // Guardar ID para click
+
+                     // Usar primera foto del evento o placeholder
+                     const imageUrl = (event.photos && event.photos.length > 0)
+                        ? event.photos[0]
+                        : `https://via.placeholder.com/600x400/${Math.random().toString(16).substr(-6)}/ffffff?text=${encodeURIComponent(event.title.substring(0, 15))}`;
+
+                     card.innerHTML = `
+                         <div class="evento-img" style="background-image: url('${imageUrl}')">
+                             <div class="evento-date">${formatDate(event.date).split(' ')[0]} ${formatDate(event.date).split(' ')[1].substring(0,3)}</div>
+                         </div>
+                         <div class="evento-content">
+                             <h3 class="evento-title">${event.title}</h3>
+                             <p class="evento-desc">${event.description}</p>
+                             <div class="evento-details">
+                                 <span class="evento-location"><i class="fas fa-map-marker-alt"></i> ${event.location}</span>
+                                 <!-- Podrías añadir hora si la tuvieras -->
+                                 <!-- <span class="evento-time"><i class="fas fa-clock"></i> 09:00 - 17:00</span> -->
+                             </div>
+                         </div>
+                     `;
+                     card.addEventListener('click', () => showEventDetail(event.id));
+                     eventosGrid.appendChild(card);
+                 });
+             }
+        };
+
+         // Búsqueda de Eventos
+         const handleSearch = () => {
+            currentSearchTerm = searchInput.value;
+            renderEventos(); // Re-renderizar la lista con el filtro aplicado
+         };
+
+        // Calendario
+        const renderCalendar = () => {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth(); // 0 = Enero, 11 = Diciembre
+
+            // Actualizar título del mes
+            const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            currentMonthEl.textContent = `${monthNames[month]} ${year}`;
+
+            // Limpiar días anteriores
+            calendarDaysContainer.innerHTML = '';
+
+            // Información del mes
+            const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0=Dom, 1=Lun,...
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+            // Ajustar primer día para que Lunes sea 0 (0->6, 1->0, 2->1,...)
+            const startDayIndex = (firstDayOfMonth === 0) ? 6 : firstDayOfMonth - 1;
+
+            // Días del mes anterior (relleno)
+            for (let i = startDayIndex - 1; i >= 0; i--) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day other-month';
+                dayEl.textContent = daysInPrevMonth - i;
+                calendarDaysContainer.appendChild(dayEl);
+            }
+
+            // Días del mes actual
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normalizar para comparación
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+                dayEl.textContent = day;
+                const currentDayDate = new Date(year, month, day);
+
+                // Marcar hoy
+                if (currentDayDate.getTime() === today.getTime()) {
+                    dayEl.classList.add('today');
+                }
+
+                // Marcar eventos
+                const eventsOnDay = eventos.filter(event => {
+                    const eventDate = new Date(event.date);
+                    eventDate.setMinutes(eventDate.getMinutes() + eventDate.getTimezoneOffset()); // Ajuste zona horaria
+                    return eventDate.getFullYear() === year &&
+                           eventDate.getMonth() === month &&
+                           eventDate.getDate() === day;
+                });
+
+                if (eventsOnDay.length > 0) {
+                    dayEl.classList.add('has-event');
+                    // Crear tooltip con los títulos de los eventos
+                    const eventTitles = eventsOnDay.map(e => e.title).join(' | ');
+                    dayEl.title = eventTitles;
+                    // Hacer clickeable si solo hay un evento (o el primero)
+                    dayEl.dataset.eventId = eventsOnDay[0].id;
+                    dayEl.addEventListener('click', () => showEventDetail(parseInt(dayEl.dataset.eventId)));
+                }
+
+                calendarDaysContainer.appendChild(dayEl);
+            }
+
+            // Días del mes siguiente (relleno)
+             const totalCells = startDayIndex + daysInMonth;
+             const remainingCells = (totalCells % 7 === 0) ? 0 : 7 - (totalCells % 7) ; // Celdas para completar la última fila
+
+            for (let i = 1; i <= remainingCells; i++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day other-month';
+                dayEl.textContent = i;
+                calendarDaysContainer.appendChild(dayEl);
+            }
+        };
+
+        const changeMonth = (offset) => {
+            currentDate.setMonth(currentDate.getMonth() + offset);
+            renderCalendar();
+        };
+
+        // Galería
+        const renderGallery = () => {
+            galleryContainer.innerHTML = ''; // Limpiar
+            const filteredData = galleryData.filter(item =>
+                currentFilter === 'all' || item.category.includes(currentFilter)
+            );
+
+            filteredData.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.classList.add('gallery-item');
+                div.dataset.category = item.category;
+                div.dataset.index = index; // Guardar índice original para modal
+                div.innerHTML = `
+                    <img src="${item.src}" alt="${item.alt}">
+                    <div class="gallery-overlay">
+                        <h3>${item.title}</h3>
+                        <p>${item.desc}</p>
+                    </div>
+                `;
+                div.addEventListener('click', () => openModal(item.src, item.title, item.desc));
+                galleryContainer.appendChild(div);
+            });
+
+             // Actualizar también la galería destacada con los primeros items filtrados (si hay suficientes)
+             renderFeaturedGallery(filteredData);
+        };
+
+        const renderFeaturedGallery = (items) => {
+            const featuredItems = featuredGalleryContainer.querySelectorAll('.featured-item');
+            featuredItems.forEach((featuredDiv, i) => {
+                const dataItem = items[i]; // Tomar los primeros items de la lista (filtrada o no)
+                 if (dataItem) {
+                     const img = featuredDiv.querySelector('img');
+                     const overlay = featuredDiv.querySelector('.gallery-overlay');
+                     img.src = dataItem.src;
+                     img.alt = dataItem.alt;
+                     overlay.querySelector('h3').textContent = dataItem.title;
+                     overlay.querySelector('p').textContent = dataItem.desc;
+                     // Actualizar el listener de clic para el modal
+                     featuredDiv.onclick = () => openModal(dataItem.src, dataItem.title, dataItem.desc);
+                 } else {
+                     // Si no hay suficientes items, mostrar placeholders o esconder
+                     const img = featuredDiv.querySelector('img');
+                     const overlay = featuredDiv.querySelector('.gallery-overlay');
+                     img.src = `https://via.placeholder.com/600x400/555/fff?text=Vacío`;
+                     img.alt = 'Placeholder';
+                     overlay.querySelector('h3').textContent = 'No disponible';
+                     overlay.querySelector('p').textContent = '';
+                     featuredDiv.onclick = null; // Desactivar clic
+                 }
+             });
+        };
+
+        const handleFilterClick = (e) => {
+            if (!e.target.classList.contains('filter-btn')) return;
+
+            filterBtns.forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            currentFilter = e.target.dataset.filter;
+
+            // Animación de filtrado
+            const items = galleryContainer.querySelectorAll('.gallery-item');
+            items.forEach(item => {
+                const categories = item.dataset.category.split(' ');
+                const shouldShow = currentFilter === 'all' || categories.includes(currentFilter);
+
+                 item.classList.toggle('hidden', !shouldShow);
+             });
+
+             // Opcional: Re-renderizar después de la animación para limpiar DOM (más complejo)
+             // Por ahora, solo usamos CSS para ocultar/mostrar visualmente.
+             // renderGallery(); // Podría causar un parpadeo si se llama inmediatamente
+        };
+
+        // Modal Galería
+        const openModal = (src, title, desc) => {
+            modalContent.innerHTML = ''; // Limpiar anterior
+            modalCaption.innerHTML = ''; // Limpiar anterior
+
+            // Detectar si es video (simple, por extensión)
+             if (src.match(/\.(mp4|webm|ogg)$/i)) {
+                const video = document.createElement('video');
+                video.src = src;
+                video.controls = true;
+                video.autoplay = true; // Opcional
+                modalContent.appendChild(video);
+            } else {
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = desc || title;
+                modalContent.appendChild(img);
+            }
+
+            modalCaption.innerHTML = `<h3>${title}</h3><p>${desc}</p>`;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Bloquear scroll del body
+        };
+
+        const closeModal = () => {
+            modal.classList.remove('active');
+            const video = modalContent.querySelector('video');
+            if (video) video.pause(); // Pausar video al cerrar
+             setTimeout(() => { // Esperar a que termine la transición de opacidad
+                 modalContent.innerHTML = '';
+                 modalCaption.innerHTML = '';
+                 document.body.style.overflow = ''; // Restaurar scroll del body
+             }, 400); // Igual a --transition-speed
+        };
+
+        // --- Inicialización y Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Navegación y UI
+            window.addEventListener('scroll', handleScroll);
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+             // Cerrar menú móvil al hacer clic en un enlace
+            navLinks.querySelectorAll('a').forEach(link => {
+                 link.addEventListener('click', closeMobileMenu);
+             });
+             // Cerrar menú móvil si se hace clic fuera de él (opcional)
+             document.addEventListener('click', (e) => {
+                 if (navLinks.classList.contains('active') && !nav.contains(e.target) && e.target !== mobileMenuBtn) {
+                     closeMobileMenu();
+                 }
+             });
+
+
+            // Intersection Observer para secciones
+            const sections = document.querySelectorAll('section[id]');
+            const sectionObserver = new IntersectionObserver(handleSectionIntersection, {
+                 root: null, // viewport
+                 threshold: 0.1 // 10% visible
+             });
+            sections.forEach(section => sectionObserver.observe(section));
+
+            // Eventos
+            renderEventos(); // Renderizar eventos iniciales
+            addEventPromptBtn.addEventListener('click', promptAddEvent);
+            addEventForm.addEventListener('submit', handleCreateEvent);
+            closeEventFormBtn.addEventListener('click', closeEventForm);
+            cancelEventFormBtn.addEventListener('click', closeEventForm);
+            backToMainBtn.addEventListener('click', hideEventDetail);
+            document.getElementById('add-comment-form').addEventListener('submit', handleAddComment);
+            searchInput.addEventListener('keyup', handleSearch); // Buscar al escribir
+
+            // Calendario
+            renderCalendar(); // Renderizar calendario inicial
+            prevMonthBtn.addEventListener('click', () => changeMonth(-1));
+            nextMonthBtn.addEventListener('click', () => changeMonth(1));
+
+            // Galería
+            renderGallery(); // Renderizar galería inicial
+            document.querySelector('.gallery-filter').addEventListener('click', handleFilterClick);
+            modalClose.addEventListener('click', closeModal);
+             // Cerrar modal al hacer clic fuera del contenido
+             modal.addEventListener('click', (e) => {
+                 if (e.target === modal) {
+                     closeModal();
+                 }
+             });
+
+            // Footer
+            currentYearSpan.textContent = new Date().getFullYear();
+
+             // Inicializar estado activo del enlace de navegación
+             handleScroll();
+        });
+
+    </script>
+</body>
+</html>
