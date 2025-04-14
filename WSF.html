@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemeinschaftliches Forellenangeln - Werningshausen 12.04.2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2a6f97;
+            --secondary-color: #468faf;
+            --accent-color: #89c2d9;
+            --light-color: #e7f3f8;
+            --dark-color: #012a4a;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .hero-banner {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            background-color: var(--dark-color);
+        }
+
+        .banner-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: brightness(0.7);
+        }
+
+        .header-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            width: 90%;
+        }
+
+        .logo {
+            max-height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            margin: 0.5rem 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .title-image {
+            max-width: 100%;
+            height: auto;
+            margin-top: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .event-info {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .event-info h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+
+        .description-text {
+            margin-top: 1.5rem;
+            text-align: left;
+            font-size: 1.1rem;
+        }
+
+        .registration {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .registration h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .registration-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .registration-form input {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .registration-form button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .registration-form button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .participant-list-container {
+            overflow-x: auto;
+        }
+
+        #participantList {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+
+        #participantList th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        #participantList td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #participantList tr:nth-child(even) {
+            background-color: var(--light-color);
+        }
+
+        #participantList tr:hover {
+            background-color: #e1e1e1;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .action-buttons button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        #exportPDF {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        #exportPDF:hover {
+            background-color: #3d8b40;
+        }
+
+        #clearList {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        #clearList:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Galerie Stile */
+        .gallery-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .gallery-section h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            aspect-ratio: 16/9;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .add-image-form {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        #imageUrl {
+            flex-grow: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        #addImageBtn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        #addImageBtn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Lightbox Stile */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        .close-lightbox {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-lightbox:hover {
+            color: var(--accent-color);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--dark-color);
+            color: white;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                position: static;
+                transform: none;
+                padding: 1rem;
+                color: var(--dark-color);
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                color: var(--primary-color);
+                text-shadow: none;
+            }
+            
+            .registration-form {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .add-image-form {
+                flex-direction: column;
+            }
+        }
+
+        /* Button Styles for Edit/Delete */
+        .edit-btn, .delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.3rem;
+            margin: 0 0.2rem;
+        }
+
+        .edit-btn:hover {
+            color: var(--secondary-color);
+        }
+
+        .delete-btn:hover {
+            color: var(--error-color);
+        }
+    </style>
+</head>
+<body>
+    <header class="hero-banner">
+        <img src="https://raw.githubusercontent.com/ErSieCode/1Rad/main/WSF_Banner.png" alt="Sportfischer Werningshausen Banner" class="banner-image">
+        <div class="header-content">
+            <img src="https://raw.githubusercontent.com/ErSieCode/1Rad/main/WSF_Logo.png" alt="Vereinslogo" class="logo">
+            <h1>Gemeinschaftliches Forellenangeln</h1>
+            <img src="https://raw.githubusercontent.com/ErSieCode/1Rad/main/WSF_Titel.png" alt="Event Titelbild" class="title-image">
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="event-info">
+            <h2>Samstag, 12. April 2025</h2>
+            <p>An der Kiesgrube Werningshausen</p>
+            <div class="description-text">
+                <p>Liebe Angelfreundinnen und -freunde, jung und alt! Der Sportfischerverein Werningshausen lädt herzlich ein zu einem besonderen Tag des gemeinsamen Angelns am Samstag, den 12. April 2025. An der idyllischen Kiesgrube wollen wir nicht nur Forellen fangen, sondern vor allem die Freude am Angelsport teilen und die kameradschaftliche Gemeinschaft pflegen.</p>
+                <p>Dieses Event steht ganz im Zeichen des Miteinanders - ob erfahrene Angler, neugierige Kinder oder interessierte Neueinsteiger, hier findet jeder seinen Platz. Großeltern können ihren Enkeln die Kunst des Angelns beibringen, Eltern mit ihren Kindern gemeinsam die Natur erleben und alle zusammen die Freude am friedvollen Sport genießen.</p>
+                <p>Packt eure Ruten ein, bringt gute Laune mit und lasst uns einen unvergesslichen Tag am Wasser verbringen! Nach getaner Arbeit können wir gemeinsam die Fänge begutachten und uns bei einem kleinen Imbiss über die schönsten Momente des Tages austauschen.</p>
+                <p>Melde dich jetzt an und werde Teil dieses besonderen Gemeinschaftserlebnisses!</p>
+            </div>
+        </section>
+
+        <section class="registration">
+            <h2>Anmeldeliste</h2>
+            <div class="registration-form">
+                <input type="text" id="lastName" placeholder="Nachname">
+                <input type="text" id="firstName" placeholder="Vorname">
+                <input type="number" id="participants" placeholder="Anzahl" min="1">
+                <button id="addParticipant">Hinzufügen</button>
+            </div>
+            
+            <div class="participant-list-container">
+                <table id="participantList">
+                    <thead>
+                        <tr>
+                            <th>Nachname</th>
+                            <th>Vorname</th>
+                            <th>Anzahl</th>
+                            <th>Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamisch gefüllt -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="exportPDF">Als PDF exportieren</button>
+                <button id="clearList">Liste leeren</button>
+            </div>
+        </section>
+
+        <section class="gallery-section">
+            <h2>Bildergalerie</h2>
+            <div class="gallery-container" id="galleryContainer">
+                <!-- Bilder werden hier dynamisch eingefügt -->
+                <div class="gallery-item">
+                    <img src="https://raw.githubusercontent.com/ErSieCode/1Rad/main/WSF_Banner.png" alt="Angel Event" onclick="openLightbox(this.src)">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://raw.githubusercontent.com/ErSieCode/1Rad/main/WSF_Logo.png" alt="Vereinslogo" onclick="openLightbox(this.src)">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://raw.githubusercontent.com/ErSieCode/1Rad/main/WSF_Titel.png" alt="Angelausflug" onclick="openLightbox(this.src)">
+                </div>
+            </div>
+            
+            <div class="add-image-form">
+                <input type="url" id="imageUrl" placeholder="Bild-URL (RAW Link) hier einfügen">
+                <button id="addImageBtn">Bild hinzufügen</button>
+            </div>
+        </section>
+
+        <!-- Lightbox für Bildervorschau -->
+        <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+            <span class="close-lightbox" onclick="closeLightbox(event)">&times;</span>
+            <div class="lightbox-content">
+                <img id="lightboxImage" src="" alt="Großansicht">
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 Sportfischer Werningshausen | Gemeinschaft erleben</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Teilnehmerliste Array
+            let participants = JSON.parse(localStorage.getItem('fishingParticipants')) || [];
+            
+            // Bildergalerie Array
+            let galleryImages = JSON.parse(localStorage.getItem('fishingGallery')) || [
+                "https://raw.githubusercontent.com/ErSieCode/1Rad/main/WSF_Banner.png",
+                "https://raw.githubusercontent.com/ErSieCode/1Rad/main/WSF_Logo.png",
+                "https://raw.githubusercontent.com/ErSieCode/1Rad/main/WSF_Titel.png"
+            ];
+            
+            // DOM Elemente
+            const participantList = document.getElementById('participantList').getElementsByTagName('tbody')[0];
+            const addButton = document.getElementById('addParticipant');
+            const exportButton = document.getElementById('exportPDF');
+            const clearButton = document.getElementById('clearList');
+            const lastNameInput = document.getElementById('lastName');
+            const firstNameInput = document.getElementById('firstName');
+            const participantsInput = document.getElementById('participants');
+            
+            // Galerie Elemente
+            const galleryContainer = document.getElementById('galleryContainer');
+            const imageUrlInput = document.getElementById('imageUrl');
+            const addImageBtn = document.getElementById('addImageBtn');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImage = document.getElementById('lightboxImage');
+            
+            // Liste rendern
+            function renderList() {
+                participantList.innerHTML = '';
+                
+                participants.forEach((participant, index) => {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${participant.lastName}</td>
+                        <td>${participant.firstName}</td>
+                        <td>${participant.participants}</td>
+                        <td>
+                            <button class="edit-btn" data-index="${index}">✏️</button>
+                            <button class="delete-btn" data-index="${index}">🗑️</button>
+                        </td>
+                    `;
+                    
+                    participantList.appendChild(row);
+                });
+                
+                // Event Listener für Buttons hinzufügen
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', deleteParticipant);
+                });
+                
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', editParticipant);
+                });
+            }
+            
+            // Galerie rendern
+            function renderGallery() {
+                galleryContainer.innerHTML = '';
+                
+                galleryImages.forEach((imageUrl, index) => {
+                    const galleryItem = document.createElement('div');
+                    galleryItem.className = 'gallery-item';
+                    
+                    const img = document.createElement('img');
+                    img.src = imageUrl;
+                    img.alt = `Angelbild ${index + 1}`;
+                    img.onclick = function() { openLightbox(imageUrl); };
+                    
+                    galleryItem.appendChild(img);
+                    galleryContainer.appendChild(galleryItem);
+                });
+            }
+            
+            // Teilnehmer hinzufügen
+            function addParticipant() {
+                const lastName = lastNameInput.value.trim();
+                const firstName = firstNameInput.value.trim();
+                const participantsCount = parseInt(participantsInput.value);
+                
+                if (!lastName || !firstName || isNaN(participantsCount) || participantsCount < 1) {
+                    alert('Bitte füllen Sie alle Felder korrekt aus!');
+                    return;
+                }
+                
+                participants.push({
+                    lastName,
+                    firstName,
+                    participants: participantsCount
+                });
+                
+                saveToLocalStorage();
+                renderList();
+                
+                // Formular zurücksetzen
+                lastNameInput.value = '';
+                firstNameInput.value = '';
+                participantsInput.value = '';
+                lastNameInput.focus();
+            }
+            
+            // Bild hinzufügen
+            function addImage() {
+                const imageUrl = imageUrlInput.value.trim();
+                
+                if (!imageUrl) {
+                    alert('Bitte geben Sie eine gültige Bild-URL ein!');
+                    return;
+                }
+                
+                // Überprüfen, ob die URL bereits existiert
+                if (galleryImages.includes(imageUrl)) {
+                    alert('Dieses Bild ist bereits in der Galerie vorhanden!');
+                    return;
+                }
+                
+                // Testen, ob die URL ein Bild ist
+                const img = new Image();
+                img.onload = function() {
+                    galleryImages.push(imageUrl);
+                    saveGalleryToLocalStorage();
+                    renderGallery();
+                    imageUrlInput.value = '';
+                };
+                img.onerror = function() {
+                    alert('Die angegebene URL führt zu keinem gültigen Bild! Bitte überprüfen Sie die URL.');
+                };
+                img.src = imageUrl;
+            }
+            
+            // Teilnehmer löschen
+            function deleteParticipant(e) {
+                e.stopPropagation();
+                const index = e.target.getAttribute('data-index');
+                if (confirm('Möchten Sie diesen Eintrag wirklich löschen?')) {
+                    participants.splice(index, 1);
+                    saveToLocalStorage();
+                    renderList();
+                }
+            }
+            
+            // Teilnehmer bearbeiten
+            function editParticipant(e) {
+                e.stopPropagation();
+                const index = e.target.getAttribute('data-index');
+                const participant = participants[index];
+                
+                lastNameInput.value = participant.lastName;
+                firstNameInput.value = participant.firstName;
+                participantsInput.value = participant.participants;
+                
+                // Bearbeitungsmodus
+                addButton.textContent = 'Aktualisieren';
+                addButton.removeEventListener('click', addParticipant);
+                
+                const updateHandler = function() {
+                    participants[index] = {
+                        lastName: lastNameInput.value.trim(),
+                        firstName: firstNameInput.value.trim(),
+                        participants: parseInt(participantsInput.value)
+                    };
+                    
+                    saveToLocalStorage();
+                    renderList();
+                    
+                    // Formular zurücksetzen
+                    lastNameInput.value = '';
+                    firstNameInput.value = '';
+                    participantsInput.value = '';
+                    addButton.textContent = 'Hinzufügen';
+                    
+                    // Event Listener wiederherstellen
+                    addButton.removeEventListener('click', updateHandler);
+                    addButton.addEventListener('click', addParticipant);
+                };
+                
+                addButton.addEventListener('click', updateHandler);
+            }
+            
+            // Lightbox öffnen
+            function openLightbox(imageSrc) {
+                event.stopPropagation();
+                lightboxImage.src = imageSrc;
+                lightbox.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Lightbox schließen
+            function closeLightbox(e) {
+                if (e) e.stopPropagation();
+                if (!e || e.target === lightbox || e.target.className === 'close-lightbox') {
+                    lightbox.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            }
+            
+            // In Local Storage speichern
+            function saveToLocalStorage() {
+                localStorage.setItem('fishingParticipants', JSON.stringify(participants));
+            }
+            
+            // Galerie in Local Storage speichern
+            function saveGalleryToLocalStorage() {
+                localStorage.setItem('fishingGallery', JSON.stringify(galleryImages));
+            }
+            
+            // Als PDF exportieren
+            async function exportToPDF() {
+                try {
+                    // Warten bis html2canvas geladen ist
+                    if (typeof html2canvas !== 'function') {
+                        throw new Error('html2canvas nicht geladen');
+                    }
+                    
+                    // Warten bis jsPDF geladen ist
+                    if (typeof jsPDF !== 'function') {
+                        throw new Error('jsPDF nicht geladen');
+                    }
+                    
+                    const { jsPDF } = window.jspdf;
+                    const element = document.querySelector('.container');
+                    const canvas = await html2canvas(element, {
+                        scale: 2,
+                        logging: false,
+                        useCORS: true
+                    });
+                    
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save('Forellenangeln_Werningshausen_2025.pdf');
+                } catch (error) {
+                    console.error('Fehler beim PDF-Export:', error);
+                    alert('Fehler beim Erstellen des PDFs. Bitte versuchen Sie es später erneut.');
+                }
+            }
+            
+            // Liste leeren
+            function clearList() {
+                if (participants.length === 0) {
+                    alert('Die Liste ist bereits leer!');
+                    return;
+                }
+                
+                if (confirm('Möchten Sie wirklich die gesamte Liste löschen?')) {
+                    participants = [];
+                    saveToLocalStorage();
+                    renderList();
+                }
+            }
+            
+            // Event Listener
+            addButton.addEventListener('click', addParticipant);
+            exportButton.addEventListener('click', exportToPDF);
+            clearButton.addEventListener('click', clearList);
+            addImageBtn.addEventListener('click', addImage);
+            
+            // Enter-Taste zum Hinzufügen
+            document.querySelectorAll('.registration-form input').forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        addParticipant();
+                    }
+                });
+            });
+            
+            imageUrlInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addImage();
+                }
+            });
+            
+            // Initiale Render
+            renderList();
+            renderGallery();
+        });
+    </script>
+</body>
+</html>
